@@ -8,4 +8,10 @@ class RoomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Room
-        fields = ('name', 'price', 'instant_book', 'user')
+        fields = ('id', 'name', 'price', 'instant_book', 'user')
+
+
+class BigRoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Room
+        fields = '__all__' # comma 붙이면 오류 발생, 아니면 exclude = () 이렇게 둬도 가능
