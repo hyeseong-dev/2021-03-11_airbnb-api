@@ -31,3 +31,11 @@ class WriteRoomSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         return Room.objects.create(**validated_data)
+
+    def validate(self, data): # 체크인, 체크아웃 data 유효성 검사 O
+        check_in = data.get('check_in') # 여기서 data는 request객체의 body부분을 의미
+        check_out = data.get('check_out')
+        if check_in == check_out:
+            raise serializers.ValidationError('Not enough time between changes')
+        else:
+            return data
