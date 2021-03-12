@@ -32,10 +32,13 @@ class WriteRoomSerializer(serializers.Serializer):
     def create(self, validated_data):
         return Room.objects.create(**validated_data)
 
-    def validate(self, data): # 체크인, 체크아웃 data 유효성 검사 O
-        check_in = data.get('check_in') # 여기서 data는 request객체의 body부분을 의미
-        check_out = data.get('check_out')
-        if check_in == check_out:
-            raise serializers.ValidationError('Not enough time between changes')
-        else:
-            return data
+    def validate(self, data): 
+        if not self.instance: # create() 메소드를 통해서 self.instance가 정확히 값을 None이 아닌 값을 참고 하고 있을때 작동하게 만듬
+            check_in = data.get('check_in')
+            check_out = data.get('check_out')
+            if check_in == check_out:
+                raise serializers.ValidationError('Not enough time between changes')
+        return data
+
+    def update(self, instance, validated_data):
+        print(instance, validated_data)
