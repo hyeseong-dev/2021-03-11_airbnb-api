@@ -46,7 +46,8 @@ class RoomView(APIView): # single로 처리
                 return Response(status=status.HTTP_403_FORBIDEN)
             serializer = WriteRoomSerializer(room, data=request.data, partial=True) # partial 사용해서 기본적으로 required fields를 모두 넣지 않아도 오류를 발생 시키지 않게함
             if serializer.is_valid(): # db에 가져온 객체 정보와 클라이언트로부터 가져온 정보를 serializer와 비교했을때 유효한가?
-                serializer.save()     # update() 메서드를 호출함.  객체 생성후 db에 저장함
+                room = serializer.save()     # update() 메서드를 호출함.  객체 생성후 db에 저장함
+                return Response(ReadRoomSerializer(room).data) # statusz 키워드를 적어주지 않아도 기본값은 200이라서 생략 가능
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             return Response()

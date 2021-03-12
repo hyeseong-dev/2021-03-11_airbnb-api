@@ -33,7 +33,10 @@ class WriteRoomSerializer(serializers.Serializer):
         return Room.objects.create(**validated_data)
 
     def validate(self, data): 
-        if not self.instance: # create() 메소드를 통해서 self.instance가 정확히 값을 None이 아닌 값을 참고 하고 있을때 작동하게 만듬
+        if self.instance: # update 하는 경우, db에 pk로 값을 조회 했을때 반환받은 값이 있는 경우 
+            check_in = data.get('check_in', self.instance.check_in)
+            check_out = data.get('check_out', self.instance.check_out)
+        else:             # create 하는 경우
             check_in = data.get('check_in')
             check_out = data.get('check_out')
             if check_in == check_out:
@@ -41,4 +44,17 @@ class WriteRoomSerializer(serializers.Serializer):
         return data
 
     def update(self, instance, validated_data):
-        print(instance, validated_data)
+        instance.name = validated_data.get('name', instance.name)
+        instance.address = validated_data.get('address', instance.address)
+        instance.price = validated_data.get('price', instance.price)
+        instance.beds = validated_data.get('beds', instance.beds)
+        instance.lat = validated_data.get('lat', instance.lat)
+        instance.lng = validated_data.get('lng', instance.lng)
+        instance.bedrooms = validated_data.get('bedrooms', instance.bedrooms)
+        instance.bathrooms = validated_data.get('bathrooms', instance.bathrooms)
+        instance.check_in = validated_data.get('check_in', instance.check_in)
+        instance.check_out = validated_data.get('check_out', instance.check_out)
+        instance.instant_book = validated_data.get(
+            'instant_book', instance.instant_book)
+        instance.save()
+        return instance
