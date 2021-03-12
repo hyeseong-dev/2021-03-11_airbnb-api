@@ -2,23 +2,14 @@ from rest_framework import serializers
 from users.serializers import RelatedUserSerializer
 from rooms.models import Room
 
-class ReadRoomSerializer(serializers.ModelSerializer):
+class RoomSerializer(serializers.ModelSerializer):
 
     user = RelatedUserSerializer()
 
     class Meta:
         model = Room
         exclude = ('modified',)
-
-# class BigRoomSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Room
-#         fields = '__all__' # comma 붙이면 오류 발생, 아니면 exclude = () 이렇게 둬도 가능
-
-class WriteRoomSerializer(serializers.ModelSerializer):
-    class Meta:
-        model: Room
-        exclude = ('user', 'modified', 'created')
+        read_only_fields = ('user','id','created','updated')
 
     def validate(self, data): 
         if self.instance: # update 하는 경우, db에 pk로 값을 조회 했을때 반환받은 값이 있는 경우 
