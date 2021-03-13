@@ -1,8 +1,8 @@
-from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Room
+from rest_framework import status
 from .serializers import RoomSerializer
+from rest_framework.response import Response
+from .models import Room
 
 
 class RoomsView(APIView): # collections로 던져줌
