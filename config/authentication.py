@@ -5,10 +5,10 @@ from rest_framework.response import Response
 from users.models import User
 
 
-class JWTAuthentication(authentication.BaseAuthentication):
-    def authenticate(self, request):
-        try:
-            token = request.META.get("HTTP_AUTHORIZATION")
+class JWTAuthentication(authentication.BaseAuthentication): # DRF의 Token방식과 JWT의 차이 DB저장 유무(JWT는 저장하지 않음)
+    def authenticate(self, request):                        # 서버 측면에서 더 효율적임 2만명이 로그인을 해도 디비에서 저장하는 것은 아무것도 없음
+        try:                                                # 리프레쉬 토큰이 현재 구현 되지 않은 부분이 있음
+            token = request.META.get("HTTP_AUTHORIZATION") # 헤더에 관한 정보는 MEATA속성에 있음
             if token is None:
                 return None
             xjwt, jwt_token = token.split(" ") #관습적으로 

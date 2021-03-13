@@ -1,15 +1,23 @@
 from rest_framework.views import APIView
-from rest_framework import status
-from .serializers import RoomSerializer
 from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.pagination import PageNumberPagination
 from .models import Room
+from .serializers import RoomSerializer
+
+
+class OwnPagination(PageNumberPagination):
+    page_size = 20
 
 
 class RoomsView(APIView): # collections로 던져줌
     def get(self, request):
-        rooms = Room.objects.all()[:5]
-        serializer = RoomSerializer(rooms, many=True).data
-        return Response(serializer)
+        paginator = OwnPagination()
+        rooms = Room.objects.all()
+        results = paginator.paginate_queryset(rooms, request)
+        serializer = RoomSerializer(results, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
     def post(self, request):
         if not request.user.is_authenticated: # 분기1: 로그인 여부 확인
@@ -63,3 +71,12 @@ class RoomView(APIView): # single로 처리
             return Response(status=status.HTTP_200_OK) # 정상 삭제되었다는 200 코드를 반환함
         else:
             return Response(status=status.HTTP_404_NOT_FOUND) # pk를 이용해서 조회했지만 없는 경우 404오류를 Response클래스에 담아서 반환함.
+
+
+@api_view(['GET'])
+def room_search(request):
+    paginator = OwnPagination()
+    rooms = Room.objects.filter()
+    result = paginator.paginate_queryset(rooms, request)
+    serializer = RoomSerializer(results, many=True)
+    return paginator.get_paginated_response(serializer.data)
