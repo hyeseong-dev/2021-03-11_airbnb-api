@@ -12,6 +12,7 @@ djangorestframework = "^3.12.2"
 django-seed = "^0.2.2"
 Pillow = "^8.1.2"
 flake8 = "^3.8.4"
+PyJWT = "^2.0.1"
 
 [tool.poetry.dev-dependencies]
 
