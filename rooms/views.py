@@ -50,7 +50,7 @@ class RoomView(APIView): # single로 처리
                 return Response(RoomSerializer(room).data) # statusz 키워드를 적어주지 않아도 기본값은 200이라서 생략 가능
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            return Response()
+            return Response(status=status.HTTP_200_OK)
         else: # pk로 뒤져본 room이 디비에 없어요.
             return Response(status=status.HTTP_404_NOT_FOUND)
     
