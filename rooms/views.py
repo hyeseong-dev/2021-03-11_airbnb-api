@@ -80,7 +80,10 @@ def room_search(request):
     beds = request.GET.get('beds',None)
     bedsrooms = request.GET.get('bedsrooms',None)
     bathrooms = request.GET.get('bathrooms',None)
+    lat = request.GET.get('lat',None) # 위도 
+    lng = request.GET.get('lng',None) # 경도
     filter_kwargs = {}
+
     if max_price is not None:
         filter_kwargs['price__lte'] = max_price
     if min_price is not None:
@@ -91,6 +94,12 @@ def room_search(request):
         filter_kwargs['bedsrooms__gte'] = bedsrooms
     if bathrooms is not None:
         filter_kwargs['bathrooms__gte'] = bathrooms
+    if lat is not None and lng is not None: 
+        filter_kwargs['lat__gte'] = float(lat) - 0.005
+        filter_kwargs['lat__lte'] = float(lat) + 0.005
+        filter_kwargs['lng__gte'] = float(lng) - 0.005
+        filter_kwargs['lng__lte'] = float(lng) + 0.005
+
     paginator = OwnPagination()
     try:
         rooms = Room.objects.filter(**filter_kwargs)
