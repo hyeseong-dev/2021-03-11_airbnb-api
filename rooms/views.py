@@ -8,7 +8,7 @@ from .serializers import RoomSerializer
 
 
 class OwnPagination(PageNumberPagination):
-    page_size = 20
+    page_size = 3
 
 
 class RoomsView(APIView): # collections로 던져줌
@@ -16,7 +16,7 @@ class RoomsView(APIView): # collections로 던져줌
         paginator = OwnPagination()
         rooms = Room.objects.all()
         results = paginator.paginate_queryset(rooms, request)
-        serializer = RoomSerializer(results, many=True)
+        serializer = RoomSerializer(results, many=True, context={'request':request}) # context 키워드 인자는 별 100만개 중요함 serializer 인스턴스에게 정보를 넘겨줌
         return paginator.get_paginated_response(serializer.data)
 
     def post(self, request):
