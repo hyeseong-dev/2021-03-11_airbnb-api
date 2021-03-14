@@ -20,7 +20,6 @@ class UsersViewSet(ModelViewSet):
     serializer_class = UserSerializer
 
     def get_permissions(self):
-        permission_classes = []
         if self.action == 'list':
             permission_classes = [IsAdminUser]
         elif (self.action == 'create' or 
