@@ -1,9 +1,5 @@
-from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.decorators import action
 from rest_framework import permissions
 from .models import Room
 from .serializers import RoomSerializer
@@ -29,38 +25,38 @@ class RoomViewSet(ModelViewSet):
         #     print(called_perm)
         # return called_perm
 
-@api_view(['GET'])
-def room_search(request):
-    max_price = request.GET.get('max_price',None)
-    min_price = request.GET.get('min_price',None)
-    beds = request.GET.get('beds',None)
-    bedsrooms = request.GET.get('bedsrooms',None)
-    bathrooms = request.GET.get('bathrooms',None)
-    lat = request.GET.get('lat',None) # 위도 
-    lng = request.GET.get('lng',None) # 경도
-    filter_kwargs = {}
+    @action(detail=False)
+    def search(self, request):
+        max_price = request.GET.get('max_price',None)
+        min_price = request.GET.get('min_price',None)
+        beds = request.GET.get('beds',None)
+        bedsrooms = request.GET.get('bedsrooms',None)
+        bathrooms = request.GET.get('bathrooms',None)
+        lat = request.GET.get('lat',None) # 위도 
+        lng = request.GET.get('lng',None) # 경도
+        filter_kwargs = {}
 
-    if max_price is not None:
-        filter_kwargs['price__lte'] = max_price
-    if min_price is not None:
-        filter_kwargs['price__gte'] = min_price
-    if beds is not None:
-        filter_kwargs['beds__gte'] = beds
-    if bedsrooms is not None:
-        filter_kwargs['bedsrooms__gte'] = bedsrooms
-    if bathrooms is not None:
-        filter_kwargs['bathrooms__gte'] = bathrooms
-    if lat is not None and lng is not None: 
-        filter_kwargs['lat__gte'] = float(lat) - 0.005
-        filter_kwargs['lat__lte'] = float(lat) + 0.005
-        filter_kwargs['lng__gte'] = float(lng) - 0.005
-        filter_kwargs['lng__lte'] = float(lng) + 0.005
+        if max_price is not None:
+            filter_kwargs['price__lte'] = max_price
+        if min_price is not None:
+            filter_kwargs['price__gte'] = min_price
+        if beds is not None:
+            filter_kwargs['beds__gte'] = beds
+        if bedsrooms is not None:
+            filter_kwargs['bedsrooms__gte'] = bedsrooms
+        if bathrooms is not None:
+            filter_kwargs['bathrooms__gte'] = bathrooms
+        if lat is not None and lng is not None: 
+            filter_kwargs['lat__gte'] = float(lat) - 0.005
+            filter_kwargs['lat__lte'] = float(lat) + 0.005
+            filter_kwargs['lng__gte'] = float(lng) - 0.005
+            filter_kwargs['lng__lte'] = float(lng) + 0.005
 
-    paginator = OwnPagination()
-    try:
-        rooms = Room.objects.filter(**filter_kwargs)
-    except ValueError: # value값이
-        rooms = Room.objects.all()
-    results = paginator.paginate_queryset(rooms, request)
-    serializer = RoomSerializer(results, many=True)
-    return paginator.get_paginated_response(serializer.data)
+        paginator = self.paginator # 기존 정의된 paginator를 끌어다 쓰기만 하면됨.
+        try:
+            rooms = Room.objects.filter(**filter_kwargs)
+        except ValueError: # value값이
+            rooms = Room.objects.all()
+        results = paginator.paginate_queryset(rooms, request)
+        serializer = RoomSerializer(results, many=True)
+        return paginator.get_paginated_response(serializer.data)
