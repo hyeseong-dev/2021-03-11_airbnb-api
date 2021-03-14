@@ -1,11 +1,19 @@
 from rest_framework import serializers
 from users.serializers import UserSerializer
-from rooms.models import Room
+from rooms.models import Room, Photo
+
+
+class PhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Photo
+        exclude = 'room',
+
 
 class RoomSerializer(serializers.ModelSerializer):
 
     user = UserSerializer(read_only=True) # 이걸 적어줘야 HTML form양식이 browseable API에 나타나지 않음
     is_fav = serializers.SerializerMethodField() # Serializer클래스의 메서드를 마치 필드와 같이 나타냄.
+    photos = PhotoSerializer(read_only=True, many=True)
 
     class Meta:
         model = Room
