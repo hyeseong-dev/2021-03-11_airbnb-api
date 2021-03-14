@@ -21,6 +21,13 @@ class RoomViewSet(ModelViewSet):
         else:
             permission_classes = [IsOwner] # 해당 데이터를 생성한 주인만!
         return [permission() for permission in permission_classes]
+        # called_perm = []
+        # for p in permission_classes:
+        #     print(p())
+        #     print('='*100)
+        #     called_perm.append(p())
+        #     print(called_perm)
+        # return called_perm
 
 @api_view(['GET'])
 def room_search(request):

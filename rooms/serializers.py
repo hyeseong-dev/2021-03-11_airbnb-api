@@ -4,7 +4,7 @@ from rooms.models import Room
 
 class RoomSerializer(serializers.ModelSerializer):
 
-    user = UserSerializer()
+    user = UserSerializer(read_only=True) # 이걸 적어줘야 HTML form양식이 browseable API에 나타나지 않음
     is_fav = serializers.SerializerMethodField() # Serializer클래스의 메서드를 마치 필드와 같이 나타냄.
 
     class Meta:
@@ -30,3 +30,8 @@ class RoomSerializer(serializers.ModelSerializer):
             if user.is_authenticated: # 해당 유저 객체가 로그인 되었는지 확인함
                 return obj in user.favs.all() # True/ False 반환
         return False
+
+    def create(self, validated_data):
+        request = self.context.get("request") # 이미 만들어진 get_serializer_context를 통해서 self.request값이 self인자를 통해서 전달되고 있음.
+        room = Room.objects.create(**validated_data, user=request.user) 
+        return room
