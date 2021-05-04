@@ -12,3 +12,4 @@ class User(AbstractUser):
         return self.rooms.count()
 
     room_count.short_description = "Room Count"
+    

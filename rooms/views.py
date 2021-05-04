@@ -4,6 +4,7 @@ from rest_framework import permissions
 from .models import Room
 from .serializers import RoomSerializer
 from .permissions import IsOwner
+from django.db.models   import Q
 
 class RoomViewSet(ModelViewSet):
     queryset = Room.objects.all()
@@ -34,6 +35,7 @@ class RoomViewSet(ModelViewSet):
         bathrooms = request.GET.get('bathrooms',None)
         lat = request.GET.get('lat',None) # 위도 
         lng = request.GET.get('lng',None) # 경도
+        
         filter_kwargs = {}
 
         if max_price is not None:
